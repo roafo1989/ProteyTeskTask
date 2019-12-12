@@ -1,6 +1,5 @@
 package com.example.demo1.model;
 
-import com.example.demo1.util.DateTimeUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +13,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
@@ -31,6 +29,9 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 public class User{
 
     public static final int START_SEQ = 100000;
+    public static final String ONLINE = "online";
+    public static final String AWAY = "away";
+    public static final String OFFLINE = "offline";
 
     @Id
     @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = START_SEQ)
@@ -54,7 +55,7 @@ public class User{
     private String phoneNumber;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    private String enabled;
 
     @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
     @NotNull
@@ -64,15 +65,15 @@ public class User{
     private Timestamp statusTimestamp;
 
     public User(Integer id, String name, String email,String password, String phoneNumber, Timestamp statusTimestamp){
-        this(id,name,email,password,phoneNumber,true,new Date(),statusTimestamp);
+        this(id,name,email,password,phoneNumber,ONLINE,new Date(),statusTimestamp);
     }
 
     public User(User u){
-        this(u.getId(),u.getName(),u.getEmail(),u.getPassword(),u.getPhoneNumber(),u.isEnabled(),u.getRegistered(),u.getStatusTimestamp());
+        this(u.getId(),u.getName(),u.getEmail(),u.getPassword(),u.getPhoneNumber(),u.getEnabled(),u.getRegistered(),u.getStatusTimestamp());
     }
 
     public User(Integer id, String name, String email, String password) {
-        this(id,name,email,password,null,true,new Date(), new Timestamp((new Date()).getTime()));
+        this(id,name,email,password,null, ONLINE,new Date(), new Timestamp((new Date()).getTime()));
     }
 
     public boolean isNew() {

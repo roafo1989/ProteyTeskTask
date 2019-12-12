@@ -1,20 +1,21 @@
 package com.example.demo1.util;
 
+
 public class StatusResponse {
 
-    private boolean oldStatus;
-    private boolean currentStatus;
+    private String oldStatus;
+    private String currentStatus;
     private Integer id;
 
     public StatusResponse() {
     }
 
-    public StatusResponse setOldStatus(boolean oldStatus) {
+    public StatusResponse setOldStatus(String oldStatus) {
         this.oldStatus = oldStatus;
         return this;
     }
 
-    public StatusResponse setCurrentStatus(boolean currentStatus) {
+    public StatusResponse setCurrentStatus(String currentStatus) {
         this.currentStatus = currentStatus;
         return this;
     }
@@ -24,11 +25,11 @@ public class StatusResponse {
         return this;
     }
 
-    public boolean isOldStatus() {
+    public String getOldStatus() {
         return oldStatus;
     }
 
-    public boolean isCurrentStatus() {
+    public String getCurrentStatus() {
         return currentStatus;
     }
 

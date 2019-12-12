@@ -43,15 +43,11 @@ public class UserService {
     public void delete(int id){
         checkNotFoundWithId(userRepo.delete(id),id);
     }
-    public void enable(int id, boolean enabled){
-        User user = getById(id);
-        user.setEnabled(enabled);
-        userRepo.save(user);
-    }
-    public List<User> findByEnabledAndStatusTimestampAfter (boolean enabled, Timestamp statusTimestamp){
+
+    public List<User> findByEnabledAndStatusTimestampAfter (String enabled, Timestamp statusTimestamp){
         return userRepo.findByEnabledAndStatusTimestampAfter(enabled, statusTimestamp);
     }
-    public List<User> findByEnabled (boolean enabled){
+    public List<User> findByEnabled (String enabled){
         return userRepo.findByEnabled(enabled);
     }
     public List<User> findByStatusTimestampAfter (Timestamp statusTimestamp){
