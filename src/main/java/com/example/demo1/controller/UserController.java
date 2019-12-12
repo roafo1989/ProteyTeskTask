@@ -66,13 +66,15 @@ public class UserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createWithLocation(@RequestBody User user) {
-        checkNew(user);
-        User created = service.create(user);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+    public Callable<ResponseEntity> create(@RequestBody User user) {
+        return () -> {
+            try {
+                User u = service.create(user);
+                return new ResponseEntity<>(u.getId(), HttpStatus.CREATED);
+            } catch (Exception e) {
+                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        };
     }
 
     @PutMapping(value = "/{id}")
