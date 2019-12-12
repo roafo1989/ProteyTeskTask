@@ -1,6 +1,7 @@
 package com.example.demo1.service;
 
 import com.example.demo1.dao.UserRepo;
+import com.example.demo1.model.StatusOfEnable;
 import com.example.demo1.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,10 +45,10 @@ public class UserService {
         checkNotFoundWithId(userRepo.delete(id),id);
     }
 
-    public List<User> findByEnabledAndStatusTimestampAfter (String enabled, Timestamp statusTimestamp){
+    public List<User> findByEnabledAndStatusTimestampAfter (StatusOfEnable enabled, Timestamp statusTimestamp){
         return userRepo.findByEnabledAndStatusTimestampAfter(enabled, statusTimestamp);
     }
-    public List<User> findByEnabled (String enabled){
+    public List<User> findByEnabled (StatusOfEnable enabled){
         return userRepo.findByEnabled(enabled);
     }
     public List<User> findByStatusTimestampAfter (Timestamp statusTimestamp){

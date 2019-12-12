@@ -1,6 +1,7 @@
 package com.example.demo1.dao;
 
 
+import com.example.demo1.model.StatusOfEnable;
 import com.example.demo1.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,8 +22,8 @@ public interface UserRepo extends JpaRepository<User, Integer> {
     @Query("DELETE FROM User u WHERE u.id=:id")
     int delete(@Param("id") int id);
 
-    List<User> findByEnabledAndStatusTimestampAfter (String enabled, Timestamp statusTimestamp);
-    List<User> findByEnabled (String enabled);
+    List<User> findByEnabledAndStatusTimestampAfter (StatusOfEnable enabled, Timestamp statusTimestamp);
+    List<User> findByEnabled (StatusOfEnable enabled);
     List<User> findByStatusTimestampAfter (Timestamp statusTimestamp);
 
 }

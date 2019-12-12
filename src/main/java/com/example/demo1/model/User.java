@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import static com.example.demo1.model.StatusOfEnable.ONLINE;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 
@@ -29,9 +30,6 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 public class User{
 
     public static final int START_SEQ = 100000;
-    public static final String ONLINE = "online";
-    public static final String AWAY = "away";
-    public static final String OFFLINE = "offline";
 
     @Id
     @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = START_SEQ)
@@ -55,7 +53,7 @@ public class User{
     private String phoneNumber;
 
     @Column(name = "enabled", nullable = false)
-    private String enabled;
+    private StatusOfEnable enabled;
 
     @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
     @NotNull
@@ -85,9 +83,10 @@ public class User{
     @Override
     public String toString() {
         return "User{" +
-                "phone='" + phoneNumber + '\'' +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", phone='" + phoneNumber + '\'' +
                 ", enabled=" + enabled + '\''+
                 ", registered=" + registered + '\''+
                 ", statusTimestamp=" + statusTimestamp +

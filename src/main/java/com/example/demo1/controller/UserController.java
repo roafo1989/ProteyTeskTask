@@ -1,5 +1,6 @@
 package com.example.demo1.controller;
 
+import com.example.demo1.model.StatusOfEnable;
 import com.example.demo1.model.User;
 import com.example.demo1.service.UserService;
 import com.example.demo1.util.StatusResponse;
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAll(@RequestParam(value = "enabled", required = false) String enabled,
+    public List<User> getAll(@RequestParam(value = "enabled", required = false) StatusOfEnable enabled,
                              @RequestParam(value = "id", required = false) Integer id){
         if(id != null){
             Timestamp timestamp = new Timestamp(id);
@@ -75,27 +76,25 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public Callable<ResponseEntity> changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") String current) {
-        return () -> {
+    public ResponseEntity<StatusResponse> changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") StatusOfEnable current) {
+        StatusResponse sr = new StatusResponse();
             Timestamp updateTime = new Timestamp((new Date()).getTime());
             try {
                 User user = service.getById(id);
-                String old = user.getEnabled();
+                StatusOfEnable old = user.getEnabled();
                 user.setEnabled(current);
                 user.setStatusTimestamp(updateTime);
                 service.update(user);
-                if(current.equalsIgnoreCase("online")){
+                if(current.equals(StatusOfEnable.ONLINE)){
                     changeToAway(user);
                 }
-                StatusResponse sr = new StatusResponse()
-                        .setId(id)
-                        .setOldStatus(old)
-                        .setCurrentStatus(current);
+                sr.setId(id);
+                sr.setOldStatus(old);
+                sr.setCurrentStatus(current);
                 return new ResponseEntity<>(sr, HttpStatus.OK);
             } catch (Exception e) {
-                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(sr, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        };
     }
 
 

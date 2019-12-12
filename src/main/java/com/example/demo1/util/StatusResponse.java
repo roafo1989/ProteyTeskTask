@@ -1,21 +1,23 @@
 package com.example.demo1.util;
 
 
+import com.example.demo1.model.StatusOfEnable;
+
 public class StatusResponse {
 
-    private String oldStatus;
-    private String currentStatus;
+    private StatusOfEnable oldStatus;
+    private StatusOfEnable currentStatus;
     private Integer id;
 
     public StatusResponse() {
     }
 
-    public StatusResponse setOldStatus(String oldStatus) {
+    public StatusResponse setOldStatus(StatusOfEnable oldStatus) {
         this.oldStatus = oldStatus;
         return this;
     }
 
-    public StatusResponse setCurrentStatus(String currentStatus) {
+    public StatusResponse setCurrentStatus(StatusOfEnable currentStatus) {
         this.currentStatus = currentStatus;
         return this;
     }
@@ -25,11 +27,11 @@ public class StatusResponse {
         return this;
     }
 
-    public String getOldStatus() {
+    public StatusOfEnable getOldStatus() {
         return oldStatus;
     }
 
-    public String getCurrentStatus() {
+    public StatusOfEnable getCurrentStatus() {
         return currentStatus;
     }
 
