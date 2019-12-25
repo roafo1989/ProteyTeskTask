@@ -15,9 +15,8 @@ import java.net.URI;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import static com.example.demo1.model.StatusChanger.changeToAway;
+import static com.example.demo1.util.StatusChanger.changeToAway;
 import static com.example.demo1.util.ValidationUtil.assureIdConsistent;
 
 
@@ -36,30 +35,40 @@ public class UserController {
     @GetMapping
     public List<User> getAll(@RequestParam(value = "enabled", required = false) StatusOfEnable enabled,
                              @RequestParam(value = "id", required = false) Integer id){
+/*
         if(id != null){
             Timestamp timestamp = new Timestamp(id);
-            if(enabled != null){
-                return service.findByEnabledAndStatusTimestampAfter(enabled,timestamp);
+            return enabled != null ? service.findByEnabledAndStatusTimestampAfter(enabled,timestamp) : service.findByStatusTimestampAfter(timestamp);
+        } else {
+           return enabled != null ? service.findByEnabled(enabled) : service.getAll();
+        }
+*/
+
+        if (id != null) {
+            Timestamp timestamp = new Timestamp(id);
+            if (enabled != null) {
+                return service.findByEnabledAndStatusTimestampAfter(enabled, timestamp);
             }
             return service.findByStatusTimestampAfter(timestamp);
-        } else if(enabled != null){
+        } else if (enabled != null) {
             return service.findByEnabled(enabled);
         }
         return service.getAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get.by.id/{id}")
     public User getById(@PathVariable int id) {
+
         return service.getById(id);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         service.delete(id);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void update(@RequestBody User user, @PathVariable int id) {
         assureIdConsistent(user,id);
@@ -75,27 +84,26 @@ public class UserController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "change.status/{id}")
     public ResponseEntity<StatusResponse> changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") StatusOfEnable current) {
-        StatusResponse sr = new StatusResponse();
-            Timestamp updateTime = new Timestamp((new Date()).getTime());
-            try {
-                User user = service.getById(id);
-                StatusOfEnable old = user.getEnabled();
-                user.setEnabled(current);
-                user.setStatusTimestamp(updateTime);
-                service.update(user);
-                if(current.equals(StatusOfEnable.ONLINE)){
-                    changeToAway(user);
-                }
-                sr.setId(id);
-                sr.setOldStatus(old);
-                sr.setCurrentStatus(current);
-                return new ResponseEntity<>(sr, HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity(sr, HttpStatus.INTERNAL_SERVER_ERROR);
+        StatusResponse statusResponse = new StatusResponse();
+        Timestamp updateTime = new Timestamp((new Date()).getTime());
+        try {
+            User user = service.getById(id);
+            StatusOfEnable old = user.getEnabled();
+            user.setEnabled(current);
+            user.setStatusTimestamp(updateTime);
+            service.update(user);
+            if(current.equals(StatusOfEnable.ONLINE)){
+                changeToAway(user);
             }
+            statusResponse.setId(id);
+            statusResponse.setOldStatus(old);
+            statusResponse.setCurrentStatus(current);
+            return new ResponseEntity<>(statusResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(statusResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
 
 }

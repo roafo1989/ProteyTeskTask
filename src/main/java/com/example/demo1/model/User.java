@@ -14,8 +14,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Objects;
 
-import static com.example.demo1.model.StatusOfEnable.ONLINE;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 
@@ -28,12 +28,9 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 @Access(AccessType.FIELD)
 @JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE, setterVisibility = NONE)
 public class User{
-
-    public static final int START_SEQ = 100000;
-
     @Id
-    @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = START_SEQ)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
+//    @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = START_SEQ)
+    @GeneratedValue/*(strategy = GenerationType.SEQUENCE, generator = "global_seq")*/
     private Integer id;
 
     @NotNull
@@ -63,7 +60,7 @@ public class User{
     private Timestamp statusTimestamp;
 
     public User(Integer id, String name, String email,String password, String phoneNumber, Timestamp statusTimestamp){
-        this(id,name,email,password,phoneNumber,ONLINE,new Date(),statusTimestamp);
+        this(id,name,email,password,phoneNumber,StatusOfEnable.ONLINE,new Date(),statusTimestamp);
     }
 
     public User(User u){
@@ -71,7 +68,7 @@ public class User{
     }
 
     public User(Integer id, String name, String email, String password) {
-        this(id,name,email,password,null, ONLINE,new Date(), new Timestamp((new Date()).getTime()));
+        this(id,name,email,password,null, StatusOfEnable.ONLINE,new Date(), new Timestamp((new Date()).getTime()));
     }
 
     public boolean isNew() {
@@ -91,5 +88,22 @@ public class User{
                 ", registered=" + registered + '\''+
                 ", statusTimestamp=" + statusTimestamp +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return getId().equals(user.getId()) &&
+                getName().equals(user.getName()) &&
+                getEmail().equals(user.getEmail()) &&
+                getPassword().equals(user.getPassword()) &&
+                getPhoneNumber().equals(user.getPhoneNumber());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getEmail(), getPassword(), getPhoneNumber());
     }
 }
