@@ -23,8 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.Timestamp;
-import java.util.Date;
+
 
 import static com.example.demo1.controller.TestUtil.readFromJson;
 import static com.example.demo1.controller.UserTestData.*;
@@ -115,15 +114,12 @@ class UserControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         User user = readFromJson(result, User.class);
 
-        Timestamp updateTime = new Timestamp((new Date()).getTime());
         StatusOfEnable updateStatus = StatusOfEnable.ONLINE;
 
         user.setEnabled(updateStatus);
-        user.setStatusTimestamp(updateTime);
 
         mockMvc.perform(put(CHANGE_STATUS)
-                .param("enabled", updateStatus + "")
-                .param("statusTimestamp", updateTime + ""))
+                .param("enabled", updateStatus + ""))
                 .andReturn();
 
         assertMatch(userService.getById(USER_ID),user);
@@ -136,27 +132,17 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         User user = readFromJson(result, User.class);
-
-        Timestamp updateTime = new Timestamp((new Date()).getTime());
         StatusOfEnable updateStatus = StatusOfEnable.ONLINE;
-
         user.setEnabled(updateStatus);
-        user.setStatusTimestamp(updateTime);
-
         mockMvc.perform(put(CHANGE_STATUS)
-                .param("enabled", updateStatus + "")
-                .param("statusTimestamp", updateTime + ""))
+                .param("enabled", updateStatus + ""))
                 .andReturn();
-
         changeToAway(user);
 
         Thread.sleep(30000);
         updateStatus = user.getEnabled();
-        updateTime = new Timestamp((new Date()).getTime());
-
         mockMvc.perform(put(CHANGE_STATUS)
-                .param("enabled", updateStatus + "")
-                .param("statusTimestamp", updateTime + ""))
+                .param("enabled", updateStatus + ""))
                 .andReturn();
 
         assertMatch(userService.getById(USER_ID),user);

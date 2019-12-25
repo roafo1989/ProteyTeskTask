@@ -10,8 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
@@ -21,9 +19,5 @@ public interface UserRepo extends JpaRepository<User, Integer> {
     @Modifying
     @Query("DELETE FROM User u WHERE u.id=:id")
     int delete(@Param("id") int id);
-
-    List<User> findByEnabledAndStatusTimestampAfter (StatusOfEnable enabled, Timestamp statusTimestamp);
-    List<User> findByEnabled (StatusOfEnable enabled);
-    List<User> findByStatusTimestampAfter (Timestamp statusTimestamp);
 
 }

@@ -8,8 +8,7 @@ import static com.example.demo1.model.StatusOfEnable.AWAY;
 
 
 @EnableScheduling
-public class StatusChanger {
-
+public class StatusChanger{
     @Scheduled(fixedDelay = 30000)
     public static void changeToAway(User user){
         user.setEnabled(AWAY);

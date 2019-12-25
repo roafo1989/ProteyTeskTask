@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
+import java.util.TimerTask;
+
 
 import static com.example.demo1.model.StatusOfEnable.AWAY;
 import static com.example.demo1.util.StatusChanger.changeToAway;
@@ -35,32 +35,12 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAll(@RequestParam(value = "enabled", required = false) StatusOfEnable enabled,
-                             @RequestParam(value = "id", required = false) Integer id){
-/*
-        if(id != null){
-            Timestamp timestamp = new Timestamp(id);
-            return enabled != null ? service.findByEnabledAndStatusTimestampAfter(enabled,timestamp) : service.findByStatusTimestampAfter(timestamp);
-        } else {
-           return enabled != null ? service.findByEnabled(enabled) : service.getAll();
-        }
-*/
-
-        if (id != null) {
-            Timestamp timestamp = new Timestamp(id);
-            if (enabled != null) {
-                return service.findByEnabledAndStatusTimestampAfter(enabled, timestamp);
-            }
-            return service.findByStatusTimestampAfter(timestamp);
-        } else if (enabled != null) {
-            return service.findByEnabled(enabled);
-        }
+    public List<User> getAll(){
         return service.getAll();
     }
 
     @GetMapping("/get.by.id/{id}")
     public User getById(@PathVariable int id) {
-
         return service.getById(id);
     }
 
@@ -87,33 +67,17 @@ public class UserController {
     }
 
     @PutMapping(value = "change.status/{id}")
-    public void changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") StatusOfEnable current) {
-        User user = service.getById(id);
-        change(user,current);
-
-        if(current.equals(StatusOfEnable.ONLINE)){
-            changeToAway(user);
-            change(user,AWAY);
-        }
-
-    }
-
-    public ResponseEntity<StatusResponse> change(User user, StatusOfEnable current){
+    public ResponseEntity<StatusResponse> changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") StatusOfEnable current) {
         StatusResponse statusResponse = new StatusResponse();
         try {
-            statusResponse.setId(user.getId());
-            statusResponse.setCurrentStatus(current);
+            User user = service.getById(id);
             statusResponse.setOldStatus(user.getEnabled());
-
-            user.setEnabled(current);
-            Timestamp updateTime = new Timestamp((new Date()).getTime());
-            user.setStatusTimestamp(updateTime);
-            service.update(user);
+            statusResponse.setId(id);
+            statusResponse.setCurrentStatus(current);
+            service.changeStatus(user,current);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return new ResponseEntity<>(statusResponse, HttpStatus.OK);
     }
-
-
 }

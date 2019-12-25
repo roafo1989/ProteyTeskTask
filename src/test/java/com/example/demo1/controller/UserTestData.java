@@ -24,37 +24,27 @@ public class UserTestData {
             "User",
             "user@yandex.ru",
             "password",
-            "89110864162",
-            Timestamp.valueOf("2013-08-25 14:30:27"));
+            "89110864162");
     static User ADMIN = new User(
             ADMIN_ID,
             "Admin",
             "admin@gmail.com",
             "admin",
-            "8800200",
-            Timestamp.valueOf("2014-08-25 14:30:27"));
+            "8800200");
     static User USER2 = new User(
             null,
             "User2",
             "user2@yandex.ru",
             "password2",
-            "89119119191",
-            Timestamp.valueOf("2019-01-01 14:30:27"));
+            "89119119191");
 
 
     public static void assertMatch(User actual, User expected) {
-        assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "statusTimestamp");
+        assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered");
     }
     public static ResultMatcher contentJson(User expected) {
         return result -> assertMatch(readFromJsonMvcResult(result, User.class), expected);
     }
-    public static User setOnline(){
-        USER.setEnabled(ONLINE);
-        return USER;
-    }
-    public static User setAway(){
-        USER.setEnabled(AWAY);
-        return USER;
-    }
+
 
 }

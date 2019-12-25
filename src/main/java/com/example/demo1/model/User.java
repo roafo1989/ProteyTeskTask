@@ -29,8 +29,7 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 @JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE, setterVisibility = NONE)
 public class User{
     @Id
-//    @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = START_SEQ)
-    @GeneratedValue/*(strategy = GenerationType.SEQUENCE, generator = "global_seq")*/
+    @GeneratedValue
     private Integer id;
 
     @NotNull
@@ -56,19 +55,16 @@ public class User{
     @NotNull
     private Date registered = new Date();
 
-    @Column(name = "status_timestamp")
-    private Timestamp statusTimestamp;
-
-    public User(Integer id, String name, String email,String password, String phoneNumber, Timestamp statusTimestamp){
-        this(id,name,email,password,phoneNumber,StatusOfEnable.ONLINE,new Date(),statusTimestamp);
+    public User(Integer id, String name, String email,String password, String phoneNumber){
+        this(id,name,email,password,phoneNumber,StatusOfEnable.ONLINE,new Date());
     }
 
     public User(User u){
-        this(u.getId(),u.getName(),u.getEmail(),u.getPassword(),u.getPhoneNumber(),u.getEnabled(),u.getRegistered(),u.getStatusTimestamp());
+        this(u.getId(),u.getName(),u.getEmail(),u.getPassword(),u.getPhoneNumber(),u.getEnabled(),u.getRegistered());
     }
 
     public User(Integer id, String name, String email, String password) {
-        this(id,name,email,password,null, StatusOfEnable.ONLINE,new Date(), new Timestamp((new Date()).getTime()));
+        this(id,name,email,password,null, StatusOfEnable.ONLINE,new Date());
     }
 
     public boolean isNew() {
@@ -85,8 +81,7 @@ public class User{
                 ", email='" + email + '\'' +
                 ", phone='" + phoneNumber + '\'' +
                 ", enabled=" + enabled + '\''+
-                ", registered=" + registered + '\''+
-                ", statusTimestamp=" + statusTimestamp +
+                ", registered=" + registered +
                 '}';
     }
 
