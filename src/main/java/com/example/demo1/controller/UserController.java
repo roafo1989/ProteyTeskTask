@@ -15,7 +15,9 @@ import java.net.URI;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
 
+import static com.example.demo1.model.StatusOfEnable.AWAY;
 import static com.example.demo1.util.StatusChanger.changeToAway;
 import static com.example.demo1.util.ValidationUtil.assureIdConsistent;
 
@@ -85,25 +87,33 @@ public class UserController {
     }
 
     @PutMapping(value = "change.status/{id}")
-    public ResponseEntity<StatusResponse> changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") StatusOfEnable current) {
+    public void changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") StatusOfEnable current) {
+        User user = service.getById(id);
+        change(user,current);
+
+        if(current.equals(StatusOfEnable.ONLINE)){
+            changeToAway(user);
+            change(user,AWAY);
+        }
+
+    }
+
+    public ResponseEntity<StatusResponse> change(User user, StatusOfEnable current){
         StatusResponse statusResponse = new StatusResponse();
-        Timestamp updateTime = new Timestamp((new Date()).getTime());
         try {
-            User user = service.getById(id);
-            StatusOfEnable old = user.getEnabled();
+            statusResponse.setId(user.getId());
+            statusResponse.setCurrentStatus(current);
+            statusResponse.setOldStatus(user.getEnabled());
+
             user.setEnabled(current);
+            Timestamp updateTime = new Timestamp((new Date()).getTime());
             user.setStatusTimestamp(updateTime);
             service.update(user);
-            if(current.equals(StatusOfEnable.ONLINE)){
-                changeToAway(user);
-            }
-            statusResponse.setId(id);
-            statusResponse.setOldStatus(old);
-            statusResponse.setCurrentStatus(current);
-            return new ResponseEntity<>(statusResponse, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(statusResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
         }
+        return new ResponseEntity<>(statusResponse, HttpStatus.OK);
     }
+
 
 }
