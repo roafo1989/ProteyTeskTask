@@ -59,12 +59,13 @@ public class User{
         this(id,name,email,password,phoneNumber,StatusOfEnable.ONLINE,new Date());
     }
 
-    public User(User u){
-        this(u.getId(),u.getName(),u.getEmail(),u.getPassword(),u.getPhoneNumber(),u.getEnabled(),u.getRegistered());
+    public User(String name, String email,String password, String phoneNumber){
+        this(null,name,email,password,phoneNumber,StatusOfEnable.ONLINE,new Date());
     }
 
-    public User(Integer id, String name, String email, String password) {
-        this(id,name,email,password,null, StatusOfEnable.ONLINE,new Date());
+
+    public User(User u){
+        this(u.getId(),u.getName(),u.getEmail(),u.getPassword(),u.getPhoneNumber(),u.getEnabled(),u.getRegistered());
     }
 
     public boolean isNew() {

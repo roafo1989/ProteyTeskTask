@@ -3,20 +3,15 @@ package com.example.demo1.service;
 import com.example.demo1.dao.UserRepo;
 import com.example.demo1.model.StatusOfEnable;
 import com.example.demo1.model.User;
-import com.example.demo1.util.StatusResponse;
+import com.example.demo1.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-
-import java.sql.Timestamp;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import static com.example.demo1.model.StatusOfEnable.AWAY;
 import static com.example.demo1.util.StatusChanger.changeToAway;
 import static com.example.demo1.util.ValidationUtil.checkNotFoundWithId;
 
@@ -34,8 +29,9 @@ public class UserService {
         return userRepo.findAll();
     }
 
+    @Transactional(noRollbackFor = Exception.class, propagation = Propagation.NESTED)
     public User create(User user){
-        Assert.notNull(user,"user must be not null");
+        //Assert.notNull(user,"user must be not null");
         return userRepo.save(user);
     }
 

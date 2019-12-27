@@ -5,6 +5,7 @@ import com.example.demo1.model.User;
 import com.example.demo1.service.UserService;
 import com.example.demo1.util.StatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,15 +60,25 @@ public class UserController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> create(@RequestBody User user) {
-        User created = service.create(user);
+        HttpHeaders headers = new HttpHeaders();
+
+        if(user == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        this.service.create(user);
+        return new ResponseEntity<>(user,headers,HttpStatus.CREATED);
+
+       /* User created = service.create(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        return ResponseEntity.created(uriOfNewResource).body(created);*/
+
     }
 
     @PutMapping(value = "change.status/{id}")
-    public ResponseEntity<StatusResponse> changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") StatusOfEnable current) {
+    public ResponseEntity<StatusResponse> changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") String status) {
+        StatusOfEnable current = StatusOfEnable.values()[Integer.parseInt(status)];
         StatusResponse statusResponse = new StatusResponse();
         try {
             User user = service.getById(id);
