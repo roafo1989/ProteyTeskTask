@@ -13,13 +13,13 @@ import java.util.Date;
 
 
 @Repository
+@Transactional
 public interface UserRepo extends JpaRepository<User, Integer> {
 
     @Modifying
     @Query("DELETE FROM User u WHERE u.id=:id")
     int delete(@Param("id") int id);
 
-    @Transactional
     @Modifying
     @Query(value = "UPDATE User u SET u.enabled=1 WHERE u.enabled=0 AND u.onlineTime<=:onlineTime")
     void updateStatus(@Param("onlineTime") Date onlineTime);

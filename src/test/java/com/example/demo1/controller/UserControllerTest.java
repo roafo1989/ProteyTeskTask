@@ -3,7 +3,7 @@ package com.example.demo1.controller;
 import com.example.demo1.Demo1Application;
 import com.example.demo1.model.StatusOfEnable;
 import com.example.demo1.model.User;
-import com.example.demo1.service.UserService;
+import com.example.demo1.service.UserServiceImpl;
 import com.example.demo1.util.exception.NotFoundException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration (classes = Demo1Application.class)
 class UserControllerTest {
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     private MockMvc mockMvc;
 
@@ -53,9 +53,9 @@ class UserControllerTest {
 
     static final String REST_URL = "http://localhost:8080/users";
 
-    static final String URI_DEL = REST_URL + "/delete/" + USER_ID;
+    static final String URI_DEL = REST_URL + "/deleteUser/" + USER_ID;
     static final String URI_GET = REST_URL + "/get.by.id/" + USER_ID;
-    static final String URI_UPD = REST_URL + "/update/" + USER_ID;
+    static final String URI_UPD = REST_URL + "/updateUser/" + USER_ID;
     static final String CHANGE_STATUS = REST_URL + "/change.status/" + USER_ID;
 
     @Test
@@ -72,7 +72,7 @@ class UserControllerTest {
         ResultActions result = mockMvc.perform(delete(URI_DEL));
         MockHttpServletResponse response = result.andReturn().getResponse();
         Assert.assertEquals("false",HttpServletResponse.SC_NO_CONTENT,response.getStatus());
-        assertThrows(NotFoundException.class, () -> userService.getById(USER_ID));
+        assertThrows(NotFoundException.class, () -> userServiceImpl.getUserById(USER_ID));
     }
 
     @Test
@@ -86,7 +86,7 @@ class UserControllerTest {
         Integer newId = created.getId();
         USER.setId(newId);
         assertMatch(created, USER);
-        assertMatch(userService.getById(newId), USER);
+        assertMatch(userServiceImpl.getUserById(newId), USER);
     }
 
     @Test
@@ -102,7 +102,7 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(JsonUtil.writeValue(USER2)))
                 .andExpect(status().isNoContent());
-        assertMatch(userService.getById(USER_ID), USER2);
+        assertMatch(userServiceImpl.getUserById(USER_ID), USER2);
     }
 
     @Test
@@ -121,7 +121,7 @@ class UserControllerTest {
                 .param("enabled", updateStatus + ""))
                 .andReturn();
 
-        assertMatch(userService.getById(USER_ID),user);
+        assertMatch(userServiceImpl.getUserById(USER_ID),user);
     }
 
    /* @Test
@@ -144,7 +144,7 @@ class UserControllerTest {
                 .param("enabled", updateStatus + ""))
                 .andReturn();
 
-        assertMatch(userService.getById(USER_ID),user);
+        assertMatch(userService.getUserById(USER_ID),user);
     }
 */
     @Test

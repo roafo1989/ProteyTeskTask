@@ -1,19 +1,15 @@
 package com.example.demo1.controller;
 
-import com.example.demo1.model.StatusOfEnable;
 import com.example.demo1.model.User;
-import com.example.demo1.service.UserService;
+import com.example.demo1.service.UserServiceImpl;
 import com.example.demo1.util.StatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 import static com.example.demo1.util.ValidationUtil.assureIdConsistent;
 
@@ -23,9 +19,9 @@ public class UserController {
 
     static final String REST_URL = "/users";
 
-    private UserService service;
+    private UserServiceImpl service;
     @Autowired
-    public UserController(UserService service) {
+    public UserController(UserServiceImpl service) {
         this.service = service;
     }
 
@@ -36,20 +32,20 @@ public class UserController {
 
     @GetMapping("/get.by.id/{id}")
     public User getById(@PathVariable int id) {
-        return service.getById(id);
+        return service.getUserById(id);
     }
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        service.delete(id);
+        service.deleteUser(id);
     }
 
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void update(@RequestBody User user, @PathVariable int id) {
         assureIdConsistent(user,id);
-        service.update(user);
+        service.updateUser(user);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -59,7 +55,7 @@ public class UserController {
         if(user == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        this.service.create(user);
+        this.service.createUser(user);
         return new ResponseEntity<>(user,headers,HttpStatus.CREATED);
     }
 
