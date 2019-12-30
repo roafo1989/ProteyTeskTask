@@ -1,16 +1,25 @@
 package com.example.demo1.util;
-
+import com.example.demo1.model.StatusOfEnable;
 import com.example.demo1.model.User;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
+import lombok.Getter;
+import lombok.Setter;
 
-import static com.example.demo1.model.StatusOfEnable.AWAY;
+import java.util.TimerTask;
 
+@Getter
+@Setter
+public class StatusChanger extends TimerTask {
+    private User user;
+    private boolean trigger = false;
 
-@EnableScheduling
-public class StatusChanger{
-    @Scheduled(fixedDelay = 30000)
-    public static void changeToAway(User user){
-        user.setEnabled(AWAY);
+    public StatusChanger(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public void run() {
+        user.setEnabled(StatusOfEnable.AWAY);
+
+        System.out.println("in status changer: " + user.getEnabled());
     }
 }

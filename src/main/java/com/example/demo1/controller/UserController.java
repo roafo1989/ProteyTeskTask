@@ -9,19 +9,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
+import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-
-import static com.example.demo1.model.StatusOfEnable.AWAY;
-import static com.example.demo1.util.StatusChanger.changeToAway;
 import static com.example.demo1.util.ValidationUtil.assureIdConsistent;
-
 
 @RestController
 @RequestMapping(value = UserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,28 +61,11 @@ public class UserController {
         }
         this.service.create(user);
         return new ResponseEntity<>(user,headers,HttpStatus.CREATED);
-
-       /* User created = service.create(user);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);*/
-
     }
 
     @PutMapping(value = "change.status/{id}")
     public ResponseEntity<StatusResponse> changeStatus(@PathVariable("id") Integer id, @RequestParam("enabled") String status) {
-        StatusOfEnable current = StatusOfEnable.values()[Integer.parseInt(status)];
-        StatusResponse statusResponse = new StatusResponse();
-        try {
-            User user = service.getById(id);
-            statusResponse.setOldStatus(user.getEnabled());
-            statusResponse.setId(id);
-            statusResponse.setCurrentStatus(current);
-            service.changeStatus(user,current);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        StatusResponse statusResponse = service.changeStatus(id, status);
         return new ResponseEntity<>(statusResponse, HttpStatus.OK);
     }
 }
