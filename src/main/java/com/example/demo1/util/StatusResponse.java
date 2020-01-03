@@ -2,40 +2,27 @@ package com.example.demo1.util;
 
 
 import com.example.demo1.model.StatusOfEnable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class StatusResponse {
 
+    private Integer id;
     private StatusOfEnable oldStatus;
     private StatusOfEnable currentStatus;
-    private Integer id;
 
-    public StatusResponse() {
-    }
-
-    public StatusResponse setOldStatus(StatusOfEnable oldStatus) {
-        this.oldStatus = oldStatus;
-        return this;
-    }
-
-    public StatusResponse setCurrentStatus(StatusOfEnable currentStatus) {
-        this.currentStatus = currentStatus;
-        return this;
-    }
-
-    public StatusResponse setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public StatusOfEnable getOldStatus() {
-        return oldStatus;
-    }
-
-    public StatusOfEnable getCurrentStatus() {
-        return currentStatus;
-    }
-
-    public Integer getId() {
-        return id;
+    @Override
+    public String toString() {
+        return "StatusResponse{" +
+                "id='" + id + '\'' +
+                ", oldStatus='" + oldStatus + '\'' +
+                ", currentStatus='" + currentStatus +
+                '}';
     }
 }

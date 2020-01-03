@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ScheduledTasks {
 
-    private static final long RATE = 1 * 60 * 1000; // 5 minutes
+    private static final long DELAY = 300 * 1000; // 5 minutes
 
     private UserServiceImpl userServiceImpl;
 
@@ -19,9 +19,8 @@ public class ScheduledTasks {
         this.userServiceImpl = userServiceImpl;
     }
 
-    @Scheduled(fixedDelay = RATE)
+    @Scheduled(fixedDelay = DELAY)
     void updateStatus() {
-        System.out.println("Change status users");
         userServiceImpl.updateStatus();
     }
 }

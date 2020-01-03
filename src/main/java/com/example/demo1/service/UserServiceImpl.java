@@ -19,15 +19,8 @@ public class UserServiceImpl implements UserService {
     public void setUserRepo(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
-
-    public List<User> getAll(){
-        return userRepo.findAll();
-    }
-
-    public User getUserById(int id){
-        return checkNotFoundWithId(userRepo.findById(id).orElse(null),id);
-    }
-    public User createUser(User user){
+    @Override
+    public Integer createUser(User user){
         Assert.notNull(user,"user must be not null");
         if(user.getOnlineTime() == null){
             user.setOnlineTime(new Date());
@@ -36,41 +29,52 @@ public class UserServiceImpl implements UserService {
             System.out.println("if from service");
             user.setEnabled(StatusOfEnable.ONLINE);
         }
-        return userRepo.save(user);
+        return userRepo.save(user).getId();
     }
 
+    @Override
+    public Optional<User> getUserById(int id) {
+        return userRepo.findById(id);
+    }
+
+    @Override
+    public Optional<StatusResponse> changeStatus(int id, String newStatus){
+        StatusOfEnable current = StatusOfEnable.values()[Integer.parseInt(newStatus)];
+        Optional<User> userOptional = userRepo.findById(id);
+        Optional<StatusResponse> status = Optional.empty();
+
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            status = Optional.of(new StatusResponse(id,user.getEnabled(),current));
+            user.setEnabled(current);
+            user.setOnlineTime(new Date());
+            userRepo.saveAndFlush(user);
+        }
+        return status;
+    }
+    @Override
+    public void updateStatus() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, -5);
+        Date calTime = cal.getTime();
+        userRepo.updateStatus(calTime);
+    }
+
+
+    //optional methods
+    @Override
     public void updateUser(User user){
         Assert.notNull(user,"user must be not null");
         user.setOnlineTime(new Date());
         userRepo.saveAndFlush(user);
     }
-
-    public StatusResponse changeStatus(int id, String newStatus){
-        StatusOfEnable current = StatusOfEnable.values()[Integer.parseInt(newStatus)];
-        StatusResponse statusResponse = new StatusResponse();
-        try {
-            User user = checkNotFoundWithId(userRepo.findById(id).orElse(null),id);
-            statusResponse.setOldStatus(user.getEnabled());
-            statusResponse.setId(id);
-            statusResponse.setCurrentStatus(current);
-            user.setEnabled(current);
-            user.setOnlineTime(new Date());
-            userRepo.saveAndFlush(user);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return statusResponse;
-    }
-
-    public void updateStatus() {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, -1);
-        Date calTime = cal.getTime();
-        userRepo.updateStatus(calTime);
-    }
-
+    @Override
     public void deleteUser(int id){
         checkNotFoundWithId(userRepo.delete(id),id);
+    }
+    @Override
+    public List<User> getAll(){
+        return userRepo.findAll();
     }
 
 }

@@ -74,7 +74,7 @@ class UserControllerTest {
         Assert.assertEquals("false",HttpServletResponse.SC_NO_CONTENT,response.getStatus());
         assertThrows(NotFoundException.class, () -> userServiceImpl.getUserById(USER_ID));
     }
-
+/*
     @Test
     void createUser() throws Exception {
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
@@ -122,7 +122,7 @@ class UserControllerTest {
                 .andReturn();
 
         assertMatch(userServiceImpl.getUserById(USER_ID),user);
-    }
+    }*/
 
    /* @Test
     void changeStatusToAwayAfterDelay() throws Exception {
